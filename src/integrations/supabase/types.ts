@@ -9,7 +9,299 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      assignments: {
+        Row: {
+          bed_id: string
+          created_at: string | null
+          end_date: string | null
+          id: string
+          occupant_id: string
+          start_date: string
+          updated_at: string | null
+        }
+        Insert: {
+          bed_id: string
+          created_at?: string | null
+          end_date?: string | null
+          id?: string
+          occupant_id: string
+          start_date: string
+          updated_at?: string | null
+        }
+        Update: {
+          bed_id?: string
+          created_at?: string | null
+          end_date?: string | null
+          id?: string
+          occupant_id?: string
+          start_date?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assignments_bed_id_fkey"
+            columns: ["bed_id"]
+            isOneToOne: false
+            referencedRelation: "beds"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignments_occupant_id_fkey"
+            columns: ["occupant_id"]
+            isOneToOne: false
+            referencedRelation: "occupants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      beds: {
+        Row: {
+          created_at: string | null
+          id: string
+          label: string
+          occupancy_status: string | null
+          room_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          label: string
+          occupancy_status?: string | null
+          room_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          label?: string
+          occupancy_status?: string | null
+          room_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "beds_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoices: {
+        Row: {
+          created_at: string | null
+          id: string
+          issued_at: string | null
+          payment_id: string
+          pdf_url: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          issued_at?: string | null
+          payment_id: string
+          pdf_url?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          issued_at?: string | null
+          payment_id?: string
+          pdf_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      occupants: {
+        Row: {
+          address: string | null
+          created_at: string | null
+          email: string | null
+          full_name: string
+          id: string
+          id_proof_url: string | null
+          owner_id: string
+          phone: string
+          updated_at: string | null
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string | null
+          email?: string | null
+          full_name: string
+          id?: string
+          id_proof_url?: string | null
+          owner_id: string
+          phone: string
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string | null
+          created_at?: string | null
+          email?: string | null
+          full_name?: string
+          id?: string
+          id_proof_url?: string | null
+          owner_id?: string
+          phone?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      payments: {
+        Row: {
+          amount_due: number
+          amount_paid: number | null
+          assignment_id: string
+          created_at: string | null
+          id: string
+          month: string
+          paid_at: string | null
+          payment_link: string | null
+          payment_qr_url: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          amount_due: number
+          amount_paid?: number | null
+          assignment_id: string
+          created_at?: string | null
+          id?: string
+          month: string
+          paid_at?: string | null
+          payment_link?: string | null
+          payment_qr_url?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          amount_due?: number
+          amount_paid?: number | null
+          assignment_id?: string
+          created_at?: string | null
+          id?: string
+          month?: string
+          paid_at?: string | null
+          payment_link?: string | null
+          payment_qr_url?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_assignment_id_fkey"
+            columns: ["assignment_id"]
+            isOneToOne: false
+            referencedRelation: "assignments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          full_name: string | null
+          id: string
+          phone: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          full_name?: string | null
+          id: string
+          phone?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      properties: {
+        Row: {
+          address: string
+          city: string
+          created_at: string | null
+          id: string
+          name: string
+          owner_id: string
+          pincode: string
+          state: string
+          updated_at: string | null
+        }
+        Insert: {
+          address: string
+          city: string
+          created_at?: string | null
+          id?: string
+          name: string
+          owner_id: string
+          pincode: string
+          state: string
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string
+          city?: string
+          created_at?: string | null
+          id?: string
+          name?: string
+          owner_id?: string
+          pincode?: string
+          state?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      rooms: {
+        Row: {
+          created_at: string | null
+          id: string
+          label: string
+          property_id: string
+          type: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          label: string
+          property_id: string
+          type: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          label?: string
+          property_id?: string
+          type?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rooms_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
