@@ -99,23 +99,6 @@ export const Auth: React.FC = () => {
       {/* Main Content */}
       <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-md space-y-6">
-          {/* Demo Credentials Card */}
-          <Card className="bg-blue-50 border-blue-200">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-blue-800">Demo Access</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2 text-xs sm:text-sm">
-              <div>
-                <span className="font-medium text-blue-700">Email:</span>{' '}
-                <span className="text-blue-600">owner@example.com</span>
-              </div>
-              <div>
-                <span className="font-medium text-blue-700">Password:</span>{' '}
-                <span className="text-blue-600">Password123</span>
-              </div>
-            </CardContent>
-          </Card>
-
           {/* Auth Card */}
           <Card className="w-full">
             <CardHeader className="space-y-2 text-center">
