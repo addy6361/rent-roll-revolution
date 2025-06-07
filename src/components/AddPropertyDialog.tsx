@@ -16,17 +16,25 @@ export const AddPropertyDialog: React.FC = () => {
 
   const addPropertyMutation = useMutation({
     mutationFn: async (formData: FormData) => {
+      // Get the current user
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      
+      if (authError || !user) {
+        throw new Error('User not authenticated');
+      }
+
       const propertyData = {
         name: formData.get('name') as string,
         address: formData.get('address') as string,
         city: formData.get('city') as string,
         state: formData.get('state') as string,
         pincode: formData.get('pincode') as string,
+        owner_id: user.id,
       };
 
       const { data, error } = await supabase
         .from('properties')
-        .insert([propertyData])
+        .insert(propertyData)
         .select()
         .single();
 
