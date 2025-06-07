@@ -31,7 +31,7 @@ const guideSteps = [
     title: 'Welcome to RentFlow!',
     description: 'Your complete property management solution',
     icon: Building2,
-    content: 'RentFlow helps you manage your PG, hostel, or rental properties efficiently. This guide will walk you through the essential steps to get started.',
+    content: 'RentFlow helps you manage your PG, hostel, or rental properties efficiently. This guide will walk you through the essential steps to get started and configure your account properly.',
     action: null
   },
   {
@@ -39,7 +39,7 @@ const guideSteps = [
     title: 'Complete Your Profile',
     description: 'Add your personal details and contact information',
     icon: User,
-    content: 'Go to Settings section to add your phone number (preferably WhatsApp number as payment links will be sent via this), profile photo (optional), and other details to complete your registration.',
+    content: 'Start by completing your profile in the Settings section. Add your full name and WhatsApp number (this is important for payment notifications). You can also add a profile photo if you want.',
     action: '/settings'
   },
   {
@@ -47,15 +47,15 @@ const guideSteps = [
     title: 'Setup Payment Methods',
     description: 'Configure how you want to receive payments',
     icon: CreditCard,
-    content: 'Navigate to Payments section and configure your UPI ID, bank account details, or other payment methods. This enables direct money transfer to your account when tenants pay.',
-    action: '/payments'
+    content: 'In the Settings section, configure your payment receiving methods like UPI ID (Paytm, GPay, PhonePe) or bank account details. This enables direct money transfer to your account when tenants pay rent.',
+    action: '/settings'
   },
   {
     id: 'add-properties',
     title: 'Add Your Properties',
     description: 'Register all your properties in the system',
     icon: Building2,
-    content: 'Add your PG, hostel, or rental properties with complete details including rooms and beds. This forms the foundation of your property management.',
+    content: 'Add your PG, hostel, or rental properties with complete details including rooms and beds. This forms the foundation of your property management system.',
     action: '/properties'
   },
   {
@@ -63,7 +63,7 @@ const guideSteps = [
     title: 'Manage Occupants',
     description: 'Add tenant details and assign them to rooms',
     icon: Users,
-    content: 'Add occupant details including their phone numbers and Gmail addresses. You can assign them to specific beds and manage their stay duration.',
+    content: 'Add occupant details including their phone numbers and Gmail addresses. You can assign them to specific beds and manage their stay duration. Make sure to include their WhatsApp numbers for communication.',
     action: '/occupants'
   },
   {
@@ -71,7 +71,7 @@ const guideSteps = [
     title: 'Payment Tracking',
     description: 'Monitor rent collection and generate payment links',
     icon: FileText,
-    content: 'The payment section helps you track monthly rent, send payment reminders, and generate QR codes for easy collection. All transactions are automatically recorded.',
+    content: 'The payment section helps you track monthly rent, send payment reminders, and generate QR codes for easy collection. All transactions are automatically recorded and you can send payment links via WhatsApp.',
     action: '/payments'
   },
   {
@@ -79,7 +79,7 @@ const guideSteps = [
     title: 'Reports & Analytics',
     description: 'Gain insights into your business performance',
     icon: BarChart3,
-    content: 'View detailed reports on occupancy rates, payment trends, and property performance. These insights help you make informed business decisions.',
+    content: 'View detailed reports on occupancy rates, payment trends, and property performance. These insights help you make informed business decisions and track your rental income.',
     action: '/reports'
   },
   {
@@ -87,8 +87,9 @@ const guideSteps = [
     title: 'WhatsApp Integration',
     description: 'Direct messaging to occupants',
     icon: MessageSquare,
-    content: 'Send payment reminders, property updates, and communicate directly with your tenants via WhatsApp. (This feature is coming soon!)',
-    action: null
+    content: 'Send payment reminders, property updates, and communicate directly with your tenants via WhatsApp. This feature will help you maintain better communication with your occupants.',
+    action: null,
+    comingSoon: true
   }
 ];
 
@@ -101,6 +102,8 @@ export const OnboardingGuide: React.FC<OnboardingGuideProps> = ({ isOpen, onClos
     if (currentStep < guideSteps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
+      // Mark onboarding as completed
+      localStorage.setItem('rentflow_onboarding_completed', 'true');
       onClose();
     }
   };
@@ -120,6 +123,7 @@ export const OnboardingGuide: React.FC<OnboardingGuideProps> = ({ isOpen, onClos
   };
 
   const confirmSkipGuide = () => {
+    localStorage.setItem('rentflow_onboarding_completed', 'true');
     setShowSkipWarning(false);
     onClose();
   };
@@ -172,7 +176,7 @@ export const OnboardingGuide: React.FC<OnboardingGuideProps> = ({ isOpen, onClos
                   {currentGuideStep.content}
                 </p>
                 
-                {currentGuideStep.id === 'whatsapp-feature' && (
+                {currentGuideStep.comingSoon && (
                   <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                     <div className="flex items-center space-x-2">
                       <AlertCircle className="h-4 w-4 text-yellow-600" />
@@ -180,6 +184,23 @@ export const OnboardingGuide: React.FC<OnboardingGuideProps> = ({ isOpen, onClos
                     </div>
                     <p className="text-sm text-yellow-700 mt-1">
                       WhatsApp integration is currently under development and will be available soon.
+                    </p>
+                  </div>
+                )}
+
+                {/* Step-specific tips */}
+                {currentGuideStep.id === 'profile' && (
+                  <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <p className="text-sm text-blue-700">
+                      <strong>Tip:</strong> Use your WhatsApp number as your phone number. This will be used to send payment links and important notifications to your tenants.
+                    </p>
+                  </div>
+                )}
+
+                {currentGuideStep.id === 'payment-setup' && (
+                  <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                    <p className="text-sm text-green-700">
+                      <strong>Important:</strong> Configure at least one payment method to start receiving payments. You can add multiple payment options for your tenants' convenience.
                     </p>
                   </div>
                 )}
@@ -222,7 +243,7 @@ export const OnboardingGuide: React.FC<OnboardingGuideProps> = ({ isOpen, onClos
                     onClick={handleActionClick}
                     className="flex items-center space-x-2"
                   >
-                    <span>Go to {currentGuideStep.title}</span>
+                    <span>Go to {currentGuideStep.title.split(' ').slice(-1)[0]}</span>
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 ) : (
@@ -230,7 +251,7 @@ export const OnboardingGuide: React.FC<OnboardingGuideProps> = ({ isOpen, onClos
                     onClick={handleNext}
                     className="flex items-center space-x-2"
                   >
-                    <span>{currentStep === guideSteps.length - 1 ? 'Finish' : 'Next'}</span>
+                    <span>{currentStep === guideSteps.length - 1 ? 'Finish Setup' : 'Next'}</span>
                     {currentStep < guideSteps.length - 1 && <ArrowRight className="h-4 w-4" />}
                     {currentStep === guideSteps.length - 1 && <CheckCircle className="h-4 w-4" />}
                   </Button>
@@ -250,7 +271,7 @@ export const OnboardingGuide: React.FC<OnboardingGuideProps> = ({ isOpen, onClos
               <span>Skip Onboarding Guide?</span>
             </DialogTitle>
             <DialogDescription>
-              Are you sure you want to skip the onboarding guide? This guide will help you set up RentFlow properly for managing your properties efficiently.
+              Are you sure you want to skip the setup guide? This guide will help you configure RentFlow properly for managing your properties efficiently. You can always access this guide later from the help section.
             </DialogDescription>
           </DialogHeader>
           <div className="flex space-x-2 justify-end">

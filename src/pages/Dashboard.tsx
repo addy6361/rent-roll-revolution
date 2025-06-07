@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -12,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 
 export const Dashboard: React.FC = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showDemoDialog, setShowDemoDialog] = useState(false);
   const [isCreatingDemo, setIsCreatingDemo] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
@@ -37,21 +37,21 @@ export const Dashboard: React.FC = () => {
     },
   });
 
-  const checkAndShowOnboarding = async () => {
-    if (user) {
-      const hasData = await hasDemoData(user.id);
-      if (!hasData) {
-        // Check if user has seen onboarding before (you could store this in localStorage or user preferences)
-        const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
-        if (!hasSeenOnboarding) {
+  // Check if user should see onboarding
+  useEffect(() => {
+    const checkOnboarding = async () => {
+      if (user) {
+        const onboardingCompleted = localStorage.getItem('rentflow_onboarding_completed');
+        const hasData = await hasDemoData(user.id);
+        
+        // Show onboarding if not completed and no data exists
+        if (!onboardingCompleted && !hasData) {
           setShowOnboarding(true);
         }
       }
-    }
-  };
+    };
 
-  useEffect(() => {
-    checkAndShowOnboarding();
+    checkOnboarding();
   }, [user]);
 
   const handleCreateDemoData = async () => {
@@ -87,7 +87,7 @@ export const Dashboard: React.FC = () => {
 
   const handleCloseOnboarding = () => {
     setShowOnboarding(false);
-    localStorage.setItem('hasSeenOnboarding', 'true');
+    localStorage.setItem('rentflow_onboarding_completed', 'true');
   };
 
   const startOnboardingGuide = () => {
@@ -138,7 +138,7 @@ export const Dashboard: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6 sm:space-y-8">
+    <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Dashboard</h1>
@@ -291,7 +291,7 @@ export const Dashboard: React.FC = () => {
       {/* Onboarding Guide */}
       <OnboardingGuide 
         isOpen={showOnboarding} 
-        onClose={handleCloseOnboarding}
+        onClose={() => setShowOnboarding(false)} 
       />
     </div>
   );
