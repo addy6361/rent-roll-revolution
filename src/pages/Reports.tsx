@@ -1,10 +1,18 @@
 
 import React from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ReportsCharts } from '@/components/ReportsCharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { BarChart3, Download } from 'lucide-react';
+import { Download } from 'lucide-react';
 
 export const Reports: React.FC = () => {
+  const exportReport = (type: string) => {
+    // This would implement actual export functionality
+    console.log('Exporting report:', type);
+    alert(`${type} report export would be implemented here`);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -14,29 +22,62 @@ export const Reports: React.FC = () => {
             Analytics and reports for your property management
           </p>
         </div>
-        <Button className="w-full sm:w-auto">
-          <Download className="h-4 w-4 mr-2" />
-          Export Data
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={() => exportReport('Payment')} variant="outline">
+            <Download className="h-4 w-4 mr-2" />
+            Export Payment Report
+          </Button>
+          <Button onClick={() => exportReport('Occupancy')} variant="outline">
+            <Download className="h-4 w-4 mr-2" />
+            Export Occupancy Report
+          </Button>
+        </div>
       </div>
 
-      <Card>
-        <CardContent className="text-center py-12">
-          <BarChart3 className="h-16 w-16 mx-auto mb-4 text-gray-400" />
-          <h3 className="text-xl font-medium text-gray-900 mb-2">Reports & Analytics</h3>
-          <p className="text-gray-500 mb-6 max-w-md mx-auto">
-            Comprehensive reporting dashboard with occupancy rates, revenue tracking, 
-            and detailed analytics for your properties.
-          </p>
-          <div className="space-y-2 text-sm text-gray-600">
-            <p>✓ Occupancy rate analytics</p>
-            <p>✓ Revenue vs target reports</p>
-            <p>✓ Paid vs pending payment analysis</p>
-            <p>✓ Monthly/quarterly summaries</p>
-            <p>✓ Export to Excel & CSV</p>
+      <Tabs defaultValue="charts" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="charts">Analytics Dashboard</TabsTrigger>
+          <TabsTrigger value="summary">Summary Reports</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="charts" className="space-y-6">
+          <ReportsCharts />
+        </TabsContent>
+        
+        <TabsContent value="summary" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Monthly Summary</CardTitle>
+                <CardDescription>Key metrics for the current month</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <p>• Total Properties: Loading...</p>
+                  <p>• Total Occupants: Loading...</p>
+                  <p>• Collection Rate: Loading...</p>
+                  <p>• Occupancy Rate: Loading...</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Performance Insights</CardTitle>
+                <CardDescription>Business performance indicators</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <p>• Best Performing Property: Loading...</p>
+                  <p>• Average Rent: Loading...</p>
+                  <p>• Pending Collections: Loading...</p>
+                  <p>• Growth Rate: Loading...</p>
+                </div>
+              </CardContent>
+            </Card>
           </div>
-        </CardContent>
-      </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

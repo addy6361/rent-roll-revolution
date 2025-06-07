@@ -89,6 +89,42 @@ export type Database = {
           },
         ]
       }
+      feedback: {
+        Row: {
+          additional_comments: string | null
+          created_at: string
+          id: string
+          organization_name: string | null
+          overall_rating: number | null
+          responses: Json
+          role: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          additional_comments?: string | null
+          created_at?: string
+          id?: string
+          organization_name?: string | null
+          overall_rating?: number | null
+          responses: Json
+          role?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          additional_comments?: string | null
+          created_at?: string
+          id?: string
+          organization_name?: string | null
+          overall_rating?: number | null
+          responses?: Json
+          role?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       invoices: {
         Row: {
           created_at: string | null
@@ -154,6 +190,48 @@ export type Database = {
           owner_id?: string
           phone?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      payment_settings: {
+        Row: {
+          account_holder_name: string | null
+          account_number: string | null
+          created_at: string
+          id: string
+          ifsc_code: string | null
+          is_active: boolean | null
+          owner_id: string | null
+          payment_method: string
+          qr_code_url: string | null
+          updated_at: string
+          upi_id: string | null
+        }
+        Insert: {
+          account_holder_name?: string | null
+          account_number?: string | null
+          created_at?: string
+          id?: string
+          ifsc_code?: string | null
+          is_active?: boolean | null
+          owner_id?: string | null
+          payment_method: string
+          qr_code_url?: string | null
+          updated_at?: string
+          upi_id?: string | null
+        }
+        Update: {
+          account_holder_name?: string | null
+          account_number?: string | null
+          created_at?: string
+          id?: string
+          ifsc_code?: string | null
+          is_active?: boolean | null
+          owner_id?: string | null
+          payment_method?: string
+          qr_code_url?: string | null
+          updated_at?: string
+          upi_id?: string | null
         }
         Relationships: []
       }

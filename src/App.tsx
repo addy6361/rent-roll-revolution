@@ -12,6 +12,7 @@ import { Properties } from '@/pages/Properties';
 import { Occupants } from '@/pages/Occupants';
 import { Payments } from '@/pages/Payments';
 import { Reports } from '@/pages/Reports';
+import { Feedback } from '@/pages/Feedback';
 import { Settings } from '@/pages/Settings';
 import NotFound from '@/pages/NotFound';
 
@@ -71,6 +72,16 @@ function App() {
                 <ProtectedRoute>
                   <Layout>
                     <Reports />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/feedback"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <Feedback />
                   </Layout>
                 </ProtectedRoute>
               }
