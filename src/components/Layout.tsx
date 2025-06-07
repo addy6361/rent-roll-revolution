@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Home, Building2, Users, CreditCard, FileText, Settings, LogOut, Menu } from 'lucide-react';
+import { Home, Building2, Users, CreditCard, FileText, Settings, LogOut, Menu, MessageSquare } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
 interface LayoutProps {
@@ -21,6 +20,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     { name: 'Occupants', href: '/occupants', icon: Users },
     { name: 'Payments', href: '/payments', icon: CreditCard },
     { name: 'Reports', href: '/reports', icon: FileText },
+    { name: 'Feedback', href: '/feedback', icon: MessageSquare },
     { name: 'Settings', href: '/settings', icon: Settings },
   ];
 
