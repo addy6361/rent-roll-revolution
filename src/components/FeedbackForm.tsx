@@ -19,33 +19,33 @@ interface FeedbackQuestion {
 const feedbackQuestions: FeedbackQuestion[] = [
   {
     id: 'ease_of_use',
-    question: 'How easy is it to navigate and use the property management system?',
+    question: 'How easy is it to navigate and use the RentFlow software?',
     options: ['Very Easy', 'Easy', 'Moderate', 'Difficult', 'Very Difficult']
   },
   {
-    id: 'feature_completeness',
-    question: 'Does the system cover all your property management needs?',
-    options: ['Completely', 'Mostly', 'Partially', 'Barely', 'Not at all']
+    id: 'property_management_needs',
+    question: 'How well does the property management feature meet your needs?',
+    options: ['Excellent', 'Good', 'Average', 'Poor', 'Very Poor']
   },
   {
-    id: 'payment_management',
-    question: 'How satisfied are you with the payment tracking and management features?',
+    id: 'occupant_management_satisfaction',
+    question: 'How satisfied are you with the occupant management system?',
     options: ['Very Satisfied', 'Satisfied', 'Neutral', 'Dissatisfied', 'Very Dissatisfied']
   },
   {
-    id: 'occupant_management',
-    question: 'How effective is the occupant management system for your needs?',
+    id: 'payment_tracking_effectiveness',
+    question: 'How effective is the payment tracking and collection feature?',
+    options: ['Extremely Effective', 'Very Effective', 'Moderately Effective', 'Slightly Effective', 'Not Effective']
+  },
+  {
+    id: 'reports_analytics_usefulness',
+    question: 'How useful are the reports and analytics provided?',
+    options: ['Extremely Useful', 'Very Useful', 'Moderately Useful', 'Slightly Useful', 'Not Useful']
+  },
+  {
+    id: 'performance_speed_rating',
+    question: 'How would you rate the overall performance and speed of the software?',
     options: ['Excellent', 'Good', 'Average', 'Below Average', 'Poor']
-  },
-  {
-    id: 'reporting_quality',
-    question: 'Are the reports and analytics helpful for your business decisions?',
-    options: ['Very Helpful', 'Helpful', 'Somewhat Helpful', 'Not Very Helpful', 'Not Helpful']
-  },
-  {
-    id: 'performance_speed',
-    question: 'How would you rate the system\'s performance and loading speed?',
-    options: ['Excellent', 'Good', 'Average', 'Slow', 'Very Slow']
   },
   {
     id: 'mobile_experience',
@@ -53,19 +53,24 @@ const feedbackQuestions: FeedbackQuestion[] = [
     options: ['Excellent', 'Good', 'Average', 'Poor', 'Very Poor']
   },
   {
-    id: 'automation_value',
-    question: 'How much time does this system save you compared to manual processes?',
-    options: ['Significant Time Savings', 'Good Time Savings', 'Some Time Savings', 'Minimal Savings', 'No Savings']
+    id: 'recommendation_likelihood',
+    question: 'How likely are you to recommend RentFlow to other property managers?',
+    options: ['Very Likely', 'Likely', 'Neutral', 'Unlikely', 'Very Unlikely']
+  },
+  {
+    id: 'comparison_other_solutions',
+    question: 'How well does RentFlow compare to other property management solutions you\'ve used?',
+    options: ['Much Better', 'Better', 'About the Same', 'Worse', 'Much Worse']
   },
   {
     id: 'market_readiness',
-    question: 'Would you recommend this system to other property managers?',
-    options: ['Definitely Yes', 'Probably Yes', 'Maybe', 'Probably No', 'Definitely No']
+    question: 'How ready do you think RentFlow is for commercial use in the market?',
+    options: ['Completely Ready', 'Mostly Ready', 'Somewhat Ready', 'Needs Improvement', 'Not Ready']
   },
   {
-    id: 'pricing_value',
-    question: 'How do you perceive the value for money of this system?',
-    options: ['Excellent Value', 'Good Value', 'Fair Value', 'Poor Value', 'Very Poor Value']
+    id: 'purchase_likelihood',
+    question: 'How likely are you to purchase/subscribe to RentFlow for your business?',
+    options: ['Definitely Will', 'Probably Will', 'Might', 'Probably Won\'t', 'Definitely Won\'t']
   }
 ];
 
@@ -138,15 +143,23 @@ export const FeedbackForm: React.FC = () => {
       });
       return;
     }
+    if (overallRating === 0) {
+      toast({
+        title: 'Rating Required',
+        description: 'Please provide an overall rating.',
+        variant: 'destructive',
+      });
+      return;
+    }
     submitFeedbackMutation.mutate();
   };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Client Feedback Form</CardTitle>
+        <CardTitle>RentFlow Client Feedback Form</CardTitle>
         <CardDescription>
-          Help us improve our property management system by sharing your experience
+          Help us improve RentFlow by sharing your experience with our property management system
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -168,7 +181,7 @@ export const FeedbackForm: React.FC = () => {
                 id="role"
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
-                placeholder="e.g., Property Manager, Owner"
+                placeholder="e.g., Property Manager, Owner, Director"
                 required
               />
             </div>
@@ -207,7 +220,7 @@ export const FeedbackForm: React.FC = () => {
           </div>
 
           <div className="space-y-3">
-            <Label>Overall Rating (1-5 stars)</Label>
+            <Label>Overall Rating (1-5 stars) *</Label>
             <div className="flex items-center space-x-1">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
@@ -230,7 +243,7 @@ export const FeedbackForm: React.FC = () => {
               id="comments"
               value={additionalComments}
               onChange={(e) => setAdditionalComments(e.target.value)}
-              placeholder="Any additional feedback or suggestions..."
+              placeholder="Any additional feedback, suggestions, or comments about RentFlow..."
               rows={4}
             />
           </div>
