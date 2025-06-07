@@ -1,66 +1,70 @@
 
 import React, { useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Plus, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
 
-interface AddPropertyDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
-
-export const AddPropertyDialog: React.FC<AddPropertyDialogProps> = ({ open, onOpenChange }) => {
-  const [loading, setLoading] = useState(false);
+export const AddPropertyDialog: React.FC = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { user } = useAuth();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!user) return;
+  const addPropertyMutation = useMutation({
+    mutationFn: async (formData: FormData) => {
+      const propertyData = {
+        name: formData.get('name') as string,
+        address: formData.get('address') as string,
+        city: formData.get('city') as string,
+        state: formData.get('state') as string,
+        pincode: formData.get('pincode') as string,
+      };
 
-    setLoading(true);
+      const { data, error } = await supabase
+        .from('properties')
+        .insert([propertyData])
+        .select()
+        .single();
 
-    const formData = new FormData(e.currentTarget);
-    const propertyData = {
-      name: formData.get('name') as string,
-      address: formData.get('address') as string,
-      city: formData.get('city') as string,
-      state: formData.get('state') as string,
-      pincode: formData.get('pincode') as string,
-      owner_id: user.id,
-    };
-
-    const { error } = await supabase
-      .from('properties')
-      .insert([propertyData]);
-
-    if (error) {
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['properties'] });
+      queryClient.invalidateQueries({ queryKey: ['properties-detailed'] });
+      setIsOpen(false);
+      toast({
+        title: 'Success',
+        description: 'Property added successfully',
+      });
+    },
+    onError: (error: Error) => {
       toast({
         title: 'Error',
         description: error.message,
         variant: 'destructive',
       });
-    } else {
-      toast({
-        title: 'Success',
-        description: 'Property added successfully!',
-      });
-      queryClient.invalidateQueries({ queryKey: ['properties'] });
-      onOpenChange(false);
-      (e.target as HTMLFormElement).reset();
-    }
+    },
+  });
 
-    setLoading(false);
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    addPropertyMutation.mutate(formData);
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button className="w-full sm:w-auto">
+          <Plus className="h-4 w-4 mr-2" />
+          Add Property
+        </Button>
+      </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Add New Property</DialogTitle>
@@ -68,71 +72,62 @@ export const AddPropertyDialog: React.FC<AddPropertyDialogProps> = ({ open, onOp
             Add a new property to your portfolio
           </DialogDescription>
         </DialogHeader>
-        
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
+          <div className="space-y-2">
             <Label htmlFor="name">Property Name</Label>
             <Input
               id="name"
               name="name"
-              required
               placeholder="e.g., Sunrise Apartments"
+              required
             />
           </div>
-          
-          <div>
+          <div className="space-y-2">
             <Label htmlFor="address">Address</Label>
             <Input
               id="address"
               name="address"
+              placeholder="e.g., 123 Main Street"
               required
-              placeholder="Complete address"
             />
           </div>
-          
           <div className="grid grid-cols-2 gap-4">
-            <div>
+            <div className="space-y-2">
               <Label htmlFor="city">City</Label>
               <Input
                 id="city"
                 name="city"
+                placeholder="e.g., Mumbai"
                 required
-                placeholder="City"
               />
             </div>
-            <div>
+            <div className="space-y-2">
               <Label htmlFor="state">State</Label>
               <Input
                 id="state"
                 name="state"
+                placeholder="e.g., Maharashtra"
                 required
-                placeholder="State"
               />
             </div>
           </div>
-          
-          <div>
+          <div className="space-y-2">
             <Label htmlFor="pincode">Pincode</Label>
             <Input
               id="pincode"
               name="pincode"
+              placeholder="e.g., 400001"
               required
-              placeholder="123456"
             />
           </div>
-          
-          <div className="flex justify-end gap-2 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" disabled={loading}>
-              {loading ? 'Adding...' : 'Add Property'}
-            </Button>
-          </div>
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={addPropertyMutation.isPending}
+          >
+            {addPropertyMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            Add Property
+          </Button>
         </form>
       </DialogContent>
     </Dialog>
