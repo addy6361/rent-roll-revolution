@@ -1,6 +1,6 @@
-
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,9 +15,9 @@ export const Occupants: React.FC = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false);
   const [selectedOccupant, setSelectedOccupant] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   // Fetch occupants
   const { data: occupants, isLoading: loadingOccupants } = useQuery({
@@ -120,13 +120,27 @@ export const Occupants: React.FC = () => {
 
   // Assign bed mutation
   const assignBedMutation = useMutation({
-    mutationFn: async ({ occupantId, bedId, startDate }: { occupantId: string, bedId: string, startDate: string }) => {
+    mutationFn: async ({ 
+      occupantId, 
+      bedId, 
+      startDate, 
+      monthlyRent, 
+      depositAmount 
+    }: { 
+      occupantId: string, 
+      bedId: string, 
+      startDate: string,
+      monthlyRent: number,
+      depositAmount: number
+    }) => {
       const { data, error } = await supabase
         .from('assignments')
         .insert([{
           occupant_id: occupantId,
           bed_id: bedId,
           start_date: startDate,
+          monthly_rent: monthlyRent,
+          deposit_amount: depositAmount,
         }])
         .select()
         .single();
@@ -148,8 +162,12 @@ export const Occupants: React.FC = () => {
       setSelectedOccupant(null);
       toast({
         title: 'Success',
-        description: 'Bed assigned successfully',
+        description: 'Bed assigned successfully! Redirecting to payments...',
       });
+      // Redirect to payments page after successful assignment
+      setTimeout(() => {
+        navigate('/payments');
+      }, 1500);
     },
     onError: (error: Error) => {
       toast({
@@ -171,11 +189,13 @@ export const Occupants: React.FC = () => {
     const formData = new FormData(e.currentTarget);
     const bedId = formData.get('bedId') as string;
     const startDate = formData.get('startDate') as string;
+    const monthlyRent = parseFloat(formData.get('monthlyRent') as string);
+    const depositAmount = parseFloat(formData.get('depositAmount') as string || '0');
 
-    if (!selectedOccupant || !bedId || !startDate) {
+    if (!selectedOccupant || !bedId || !startDate || !monthlyRent) {
       toast({
         title: 'Error',
-        description: 'Please fill in all fields',
+        description: 'Please fill in all required fields',
         variant: 'destructive',
       });
       return;
@@ -185,6 +205,8 @@ export const Occupants: React.FC = () => {
       occupantId: selectedOccupant.id,
       bedId,
       startDate,
+      monthlyRent,
+      depositAmount,
     });
   };
 
@@ -353,9 +375,9 @@ export const Occupants: React.FC = () => {
       <Dialog open={isAssignDialogOpen} onOpenChange={setIsAssignDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Assign Bed</DialogTitle>
+            <DialogTitle>Assign Bed & Set Payment Details</DialogTitle>
             <DialogDescription>
-              Assign {selectedOccupant?.full_name} to a bed
+              Assign {selectedOccupant?.full_name} to a bed and set rent/deposit amounts
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleAssignBed} className="space-y-4">
@@ -375,6 +397,25 @@ export const Occupants: React.FC = () => {
               </Select>
             </div>
             <div className="space-y-2">
+              <Label htmlFor="monthlyRent">Monthly Rent (₹) <span className="text-red-500">*</span></Label>
+              <Input
+                id="monthlyRent"
+                name="monthlyRent"
+                type="number"
+                placeholder="e.g., 5000"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="depositAmount">Security Deposit (₹)</Label>
+              <Input
+                id="depositAmount"
+                name="depositAmount"
+                type="number"
+                placeholder="e.g., 10000"
+              />
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="startDate">Start Date</Label>
               <Input
                 id="startDate"
@@ -389,7 +430,7 @@ export const Occupants: React.FC = () => {
               disabled={assignBedMutation.isPending}
             >
               {assignBedMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Assign Bed
+              Assign Bed & Create Payment Records
             </Button>
           </form>
         </DialogContent>

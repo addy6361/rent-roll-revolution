@@ -2,288 +2,269 @@ import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Building2, Users, CreditCard, TrendingUp, Loader2, PlayCircle } from 'lucide-react';
+import { Building2, Users, CreditCard, AlertCircle, TrendingUp, Calendar } from 'lucide-react';
 import { OnboardingGuide } from '@/components/OnboardingGuide';
-import { createDemoData, hasDemoData } from '@/utils/demoData';
-import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from '@/hooks/use-toast';
 
 export const Dashboard: React.FC = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [showDemoDialog, setShowDemoDialog] = useState(false);
-  const [isCreatingDemo, setIsCreatingDemo] = useState(false);
-  const { user } = useAuth();
-  const { toast } = useToast();
 
-  const { data: stats, isLoading } = useQuery({
-    queryKey: ['dashboard-stats'],
-    queryFn: async () => {
-      const [propertiesResult, occupantsResult, paymentsResult] = await Promise.all([
-        supabase.from('properties').select('id'),
-        supabase.from('occupants').select('id'),
-        supabase.from('payments').select('amount_paid, status').eq('status', 'paid')
-      ]);
-
-      const totalRentCollected = paymentsResult.data?.reduce((sum, payment) => 
-        sum + (payment.amount_paid || 0), 0) || 0;
-
-      return {
-        totalProperties: propertiesResult.data?.length || 0,
-        totalOccupants: occupantsResult.data?.length || 0,
-        totalRentCollected,
-        paidPayments: paymentsResult.data?.length || 0
-      };
-    },
-  });
-
-  // Check if user should see onboarding
+  // Check if user is new and should see onboarding
   useEffect(() => {
-    const checkOnboarding = async () => {
-      if (user) {
-        const onboardingCompleted = localStorage.getItem('rentflow_onboarding_completed');
-        const hasData = await hasDemoData(user.id);
-        
-        // Show onboarding if not completed and no data exists
-        if (!onboardingCompleted && !hasData) {
-          setShowOnboarding(true);
-        }
+    const checkOnboardingStatus = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Check if user has completed profile setup
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      // Check if user has any properties
+      const { data: properties } = await supabase
+        .from('properties')
+        .select('id')
+        .eq('owner_id', user.id)
+        .limit(1);
+
+      // Show onboarding if profile is incomplete or no properties exist
+      const shouldShowOnboarding = !profile?.full_name || !profile?.phone || !properties?.length;
+      
+      // Also check localStorage to see if user has dismissed onboarding
+      const hasSeenOnboarding = localStorage.getItem('rentflow_onboarding_completed');
+      
+      if (shouldShowOnboarding && !hasSeenOnboarding) {
+        setShowOnboarding(true);
       }
     };
 
-    checkOnboarding();
-  }, [user]);
+    checkOnboardingStatus();
+  }, []);
 
-  const handleCreateDemoData = async () => {
-    if (!user) return;
-    
-    setIsCreatingDemo(true);
-    try {
-      const success = await createDemoData(user.id);
-      if (success) {
-        toast({
-          title: 'Demo Data Created',
-          description: 'Sample properties, occupants, and payments have been added to help you explore RentFlow.',
-        });
-        // Refresh stats
-        window.location.reload();
-      } else {
-        toast({
-          title: 'Error',
-          description: 'Failed to create demo data. Please try again.',
-          variant: 'destructive',
-        });
-      }
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'An error occurred while creating demo data.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsCreatingDemo(false);
-    }
-  };
-
-  const handleCloseOnboarding = () => {
+  const handleOnboardingClose = () => {
     setShowOnboarding(false);
     localStorage.setItem('rentflow_onboarding_completed', 'true');
   };
 
-  const startOnboardingGuide = () => {
-    setShowOnboarding(true);
-  };
+  const { data: properties } = useQuery({
+    queryKey: ['properties-count'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return 0;
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-64">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-      </div>
-    );
-  }
+      const { count } = await supabase
+        .from('properties')
+        .select('*', { count: 'exact' })
+        .eq('owner_id', user.id);
 
-  const statCards = [
-    {
-      title: 'Total Properties',
-      value: stats?.totalProperties || 0,
-      icon: Building2,
-      description: 'Properties under management',
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50'
+      return count || 0;
     },
-    {
-      title: 'Active Occupants',
-      value: stats?.totalOccupants || 0,
-      icon: Users,
-      description: 'Current tenants',
-      color: 'text-green-600',
-      bgColor: 'bg-green-50'
+  });
+
+  const { data: occupants } = useQuery({
+    queryKey: ['occupants-count'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return 0;
+
+      const { count } = await supabase
+        .from('occupants')
+        .select('*', { count: 'exact' })
+        .eq('owner_id', user.id);
+
+      return count || 0;
     },
-    {
-      title: 'Rent Collected',
-      value: `₹${stats?.totalRentCollected?.toLocaleString() || 0}`,
-      icon: CreditCard,
-      description: 'Total payments received',
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50'
+  });
+
+  const { data: payments } = useQuery({
+    queryKey: ['payments-summary'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return { total: 0, pending: 0, overdue: 0 };
+
+      // Get all assignments for this user's properties
+      const { data: assignments } = await supabase
+        .from('assignments')
+        .select(`
+          id,
+          beds (
+            rooms (
+              properties!inner (
+                owner_id
+              )
+            )
+          )
+        `)
+        .eq('beds.rooms.properties.owner_id', user.id);
+
+      if (!assignments?.length) return { total: 0, pending: 0, overdue: 0 };
+
+      const assignmentIds = assignments.map(a => a.id);
+
+      const { data: paymentsData } = await supabase
+        .from('payments')
+        .select('amount_due, status, due_date')
+        .in('assignment_id', assignmentIds);
+
+      const total = paymentsData?.reduce((sum, p) => sum + p.amount_due, 0) || 0;
+      const pending = paymentsData?.filter(p => p.status === 'pending').length || 0;
+      const overdue = paymentsData?.filter(p => 
+        p.status === 'pending' && new Date(p.due_date) < new Date()
+      ).length || 0;
+
+      return { total, pending, overdue };
     },
-    {
-      title: 'Paid Payments',
-      value: stats?.paidPayments || 0,
-      icon: TrendingUp,
-      description: 'Successful transactions',
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-50'
-    }
-  ];
+  });
+
+  const { data: occupancyRate } = useQuery({
+    queryKey: ['occupancy-rate'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return 0;
+
+      const { data: beds } = await supabase
+        .from('beds')
+        .select(`
+          occupancy_status,
+          rooms (
+            properties!inner (
+              owner_id
+            )
+          )
+        `)
+        .eq('rooms.properties.owner_id', user.id);
+
+      if (!beds?.length) return 0;
+
+      const occupiedBeds = beds.filter(bed => bed.occupancy_status === 'occupied').length;
+      return Math.round((occupiedBeds / beds.length) * 100);
+    },
+  });
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600 mt-1 sm:mt-2 text-sm sm:text-base">
-            Overview of your property management
-          </p>
-        </div>
-        <div className="flex gap-2 mt-4 sm:mt-0">
-          <Button 
-            variant="outline" 
-            onClick={startOnboardingGuide}
-            className="flex items-center space-x-2"
-          >
-            <PlayCircle className="h-4 w-4" />
-            <span>Quick Guide</span>
-          </Button>
-          {stats && stats.totalProperties === 0 && (
-            <Button 
-              onClick={handleCreateDemoData}
-              disabled={isCreatingDemo}
-              className="flex items-center space-x-2"
-            >
-              {isCreatingDemo && <Loader2 className="h-4 w-4 animate-spin" />}
-              <span>Add Demo Data</span>
-            </Button>
-          )}
-        </div>
+      <div>
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Dashboard</h1>
+        <p className="text-gray-600 mt-1 text-sm sm:text-base">
+          Welcome back! Here's an overview of your rental business.
+        </p>
       </div>
-
-      {/* Welcome Message for New Users */}
-      {stats && stats.totalProperties === 0 && (
-        <Card className="border-blue-200 bg-blue-50">
-          <CardHeader>
-            <CardTitle className="text-blue-900">Welcome to RentFlow! 🎉</CardTitle>
-            <CardDescription className="text-blue-700">
-              Get started by exploring our demo data or adding your own properties
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-blue-800 mb-4">
-              New to RentFlow? We recommend starting with our demo data to understand how the system works, 
-              then following our quick guide to set up your own properties.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-2">
-              <Button onClick={handleCreateDemoData} disabled={isCreatingDemo}>
-                {isCreatingDemo && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-                Create Sample Data
-              </Button>
-              <Button variant="outline" onClick={startOnboardingGuide}>
-                <PlayCircle className="h-4 w-4 mr-2" />
-                Start Guide
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        {statCards.map((stat, index) => (
-          <Card key={index} className="hover:shadow-md transition-shadow">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                {stat.title}
-              </CardTitle>
-              <div className={`p-2 rounded-md ${stat.bgColor}`}>
-                <stat.icon className={`h-4 w-4 ${stat.color}`} />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-xl sm:text-2xl font-bold text-gray-900">
-                {stat.value}
-              </div>
-              <p className="text-xs text-gray-500 mt-1">
-                {stat.description}
-              </p>
-            </CardContent>
-          </Card>
-        ))}
+        <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Properties</CardTitle>
+            <Building2 className="h-4 w-4" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{properties || 0}</div>
+            <p className="text-xs text-blue-100">Active properties</p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Occupants</CardTitle>
+            <Users className="h-4 w-4" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{occupants || 0}</div>
+            <p className="text-xs text-green-100">Registered tenants</p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Monthly Revenue</CardTitle>
+            <CreditCard className="h-4 w-4" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">₹{payments?.total.toLocaleString() || 0}</div>
+            <p className="text-xs text-purple-100">This month</p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-r from-orange-500 to-orange-600 text-white">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Occupancy Rate</CardTitle>
+            <TrendingUp className="h-4 w-4" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{occupancyRate || 0}%</div>
+            <p className="text-xs text-orange-100">Current occupancy</p>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Quick Actions */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+      {/* Quick Actions & Alerts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg sm:text-xl">Next Steps</CardTitle>
-            <CardDescription>
-              Complete your property management setup
-            </CardDescription>
+            <CardTitle className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-yellow-600" />
+              Pending Actions
+            </CardTitle>
+            <CardDescription>Items that require your attention</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3 sm:space-y-4">
-            <div className="flex items-center justify-between p-3 sm:p-4 bg-blue-50 rounded-lg">
-              <div className="flex items-center">
-                <Building2 className="h-5 w-5 text-blue-600 mr-3" />
-                <span className="text-sm sm:text-base font-medium">Add Properties</span>
+          <CardContent className="space-y-3">
+            {payments?.pending > 0 && (
+              <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                <div>
+                  <p className="font-medium text-yellow-800">Pending Payments</p>
+                  <p className="text-sm text-yellow-600">{payments.pending} payments awaiting collection</p>
+                </div>
+                <div className="text-2xl font-bold text-yellow-700">{payments.pending}</div>
               </div>
-              <span className="text-xs sm:text-sm text-blue-600">Configure</span>
-            </div>
-            <div className="flex items-center justify-between p-3 sm:p-4 bg-green-50 rounded-lg">
-              <div className="flex items-center">
-                <Users className="h-5 w-5 text-green-600 mr-3" />
-                <span className="text-sm sm:text-base font-medium">Add Occupants</span>
+            )}
+            
+            {payments?.overdue > 0 && (
+              <div className="flex items-center justify-between p-3 bg-red-50 rounded-lg border border-red-200">
+                <div>
+                  <p className="font-medium text-red-800">Overdue Payments</p>
+                  <p className="text-sm text-red-600">{payments.overdue} payments past due date</p>
+                </div>
+                <div className="text-2xl font-bold text-red-700">{payments.overdue}</div>
               </div>
-              <span className="text-xs sm:text-sm text-green-600">Available</span>
-            </div>
-            <div className="flex items-center justify-between p-3 sm:p-4 bg-purple-50 rounded-lg">
-              <div className="flex items-center">
-                <CreditCard className="h-5 w-5 text-purple-600 mr-3" />
-                <span className="text-sm sm:text-base font-medium">Setup Payments</span>
+            )}
+
+            {(!payments?.pending && !payments?.overdue) && (
+              <div className="text-center py-8 text-gray-500">
+                <CheckCircle className="h-12 w-12 mx-auto mb-2 text-green-500" />
+                <p>All caught up! No pending actions.</p>
               </div>
-              <span className="text-xs sm:text-sm text-purple-600">Available</span>
-            </div>
+            )}
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg sm:text-xl">Recent Activity</CardTitle>
-            <CardDescription>
-              Latest updates from your properties
-            </CardDescription>
+            <CardTitle className="flex items-center gap-2">
+              <Calendar className="h-5 w-5 text-blue-600" />
+              Quick Stats
+            </CardTitle>
+            <CardDescription>Key metrics at a glance</CardDescription>
           </CardHeader>
-          <CardContent>
-            {stats && stats.totalProperties > 0 ? (
-              <div className="space-y-3">
-                <div className="flex items-center justify-between py-2">
-                  <span className="text-sm text-gray-600">Properties Added</span>
-                  <span className="text-sm font-medium">{stats.totalProperties}</span>
-                </div>
-                <div className="flex items-center justify-between py-2">
-                  <span className="text-sm text-gray-600">Active Occupants</span>
-                  <span className="text-sm font-medium">{stats.totalOccupants}</span>
-                </div>
-                <div className="flex items-center justify-between py-2">
-                  <span className="text-sm text-gray-600">Payments Received</span>
-                  <span className="text-sm font-medium">₹{stats.totalRentCollected?.toLocaleString()}</span>
-                </div>
-              </div>
-            ) : (
-              <div className="text-center py-6 sm:py-8 text-gray-500">
-                <Building2 className="h-8 w-8 sm:h-12 sm:w-12 mx-auto mb-3 sm:mb-4 opacity-40" />
-                <p className="text-sm sm:text-base">No recent activity</p>
-                <p className="text-xs sm:text-sm mt-1">Start by adding your first property</p>
-              </div>
-            )}
+          <CardContent className="space-y-4">
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">Collection Rate</span>
+              <span className="font-bold text-green-600">
+                {payments?.total > 0 ? Math.round(((payments.total - (payments.pending * 5000)) / payments.total) * 100) : 0}%
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">Avg. Occupancy</span>
+              <span className="font-bold text-blue-600">{occupancyRate || 0}%</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">Properties</span>
+              <span className="font-bold text-purple-600">{properties || 0}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">Active Tenants</span>
+              <span className="font-bold text-orange-600">{occupants || 0}</span>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -291,7 +272,8 @@ export const Dashboard: React.FC = () => {
       {/* Onboarding Guide */}
       <OnboardingGuide 
         isOpen={showOnboarding} 
-        onClose={() => setShowOnboarding(false)} 
+        onClose={handleOnboardingClose}
+        autoStart={true}
       />
     </div>
   );

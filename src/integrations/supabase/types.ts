@@ -13,8 +13,10 @@ export type Database = {
         Row: {
           bed_id: string
           created_at: string | null
+          deposit_amount: number | null
           end_date: string | null
           id: string
+          monthly_rent: number | null
           occupant_id: string
           start_date: string
           updated_at: string | null
@@ -22,8 +24,10 @@ export type Database = {
         Insert: {
           bed_id: string
           created_at?: string | null
+          deposit_amount?: number | null
           end_date?: string | null
           id?: string
+          monthly_rent?: number | null
           occupant_id: string
           start_date: string
           updated_at?: string | null
@@ -31,8 +35,10 @@ export type Database = {
         Update: {
           bed_id?: string
           created_at?: string | null
+          deposit_amount?: number | null
           end_date?: string | null
           id?: string
+          monthly_rent?: number | null
           occupant_id?: string
           start_date?: string
           updated_at?: string | null
@@ -241,11 +247,13 @@ export type Database = {
           amount_paid: number | null
           assignment_id: string
           created_at: string | null
+          due_date: string | null
           id: string
           month: string
           paid_at: string | null
           payment_link: string | null
           payment_qr_url: string | null
+          payment_type: string | null
           status: string | null
           updated_at: string | null
         }
@@ -254,11 +262,13 @@ export type Database = {
           amount_paid?: number | null
           assignment_id: string
           created_at?: string | null
+          due_date?: string | null
           id?: string
           month: string
           paid_at?: string | null
           payment_link?: string | null
           payment_qr_url?: string | null
+          payment_type?: string | null
           status?: string | null
           updated_at?: string | null
         }
@@ -267,11 +277,13 @@ export type Database = {
           amount_paid?: number | null
           assignment_id?: string
           created_at?: string | null
+          due_date?: string | null
           id?: string
           month?: string
           paid_at?: string | null
           payment_link?: string | null
           payment_qr_url?: string | null
+          payment_type?: string | null
           status?: string | null
           updated_at?: string | null
         }
