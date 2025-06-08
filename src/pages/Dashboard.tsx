@@ -1,8 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Building2, Users, CreditCard, AlertCircle, TrendingUp, Calendar } from 'lucide-react';
+import { Building2, Users, CreditCard, AlertCircle, TrendingUp, Calendar, CheckCircle } from 'lucide-react';
 import { OnboardingGuide } from '@/components/OnboardingGuide';
 
 export const Dashboard: React.FC = () => {

@@ -5,7 +5,7 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { Layout } from '@/components/Layout';
 import { Toaster } from '@/components/ui/toaster';
-import Index from '@/pages/Index';
+import { Index } from '@/pages/Index';
 import { Auth } from '@/pages/Auth';
 import { Dashboard } from '@/pages/Dashboard';
 import { Properties } from '@/pages/Properties';
