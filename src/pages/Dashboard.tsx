@@ -1,10 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Building2, Users, CreditCard, AlertCircle, TrendingUp, Calendar, CheckCircle } from 'lucide-react';
-import { OnboardingGuide } from '@/components/OnboardingGuide';
 
 export const Dashboard: React.FC = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -269,13 +267,6 @@ export const Dashboard: React.FC = () => {
           </CardContent>
         </Card>
       </div>
-
-      {/* Onboarding Guide */}
-      <OnboardingGuide 
-        isOpen={showOnboarding} 
-        onClose={handleOnboardingClose}
-        autoStart={true}
-      />
     </div>
   );
 };

@@ -3,12 +3,13 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Building2, Users, CreditCard, BarChart3, ArrowRight, CheckCircle, Star, Play, Zap, Shield, Clock } from 'lucide-react';
+import { Building2, Users, CreditCard, BarChart3, ArrowRight, Star, Zap, Shield, Clock, X } from 'lucide-react';
 
 export const Index: React.FC = () => {
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
   const [activeFeature, setActiveFeature] = useState(0);
+  const [selectedFeature, setSelectedFeature] = useState<number | null>(null);
 
   useEffect(() => {
     setIsVisible(true);
@@ -23,25 +24,57 @@ export const Index: React.FC = () => {
       icon: <Building2 className="h-8 w-8" />,
       title: 'Property Management',
       description: 'Manage multiple properties, rooms, and beds with ease',
-      color: 'from-blue-500 to-blue-600'
+      color: 'from-blue-500 to-blue-600',
+      details: [
+        'Multi-property portfolio management',
+        'Room and bed allocation system',
+        'Real-time occupancy tracking',
+        'Property maintenance scheduling',
+        'Digital property documentation',
+        'Location-based property mapping'
+      ]
     },
     {
       icon: <Users className="h-8 w-8" />,
       title: 'Occupant Tracking',
       description: 'Keep track of all your tenants and their assignments',
-      color: 'from-green-500 to-green-600'
+      color: 'from-green-500 to-green-600',
+      details: [
+        'Complete tenant profile management',
+        'Digital KYC and document verification',
+        'Automated bed assignment system',
+        'Tenant communication portal',
+        'Move-in/move-out tracking',
+        'Emergency contact management'
+      ]
     },
     {
       icon: <CreditCard className="h-8 w-8" />,
       title: 'Payment Management',
       description: 'Automate rent collection and generate payment links',
-      color: 'from-purple-500 to-purple-600'
+      color: 'from-purple-500 to-purple-600',
+      details: [
+        'Automated rent collection system',
+        'Multiple payment gateway integration',
+        'Instant payment notifications',
+        'Digital invoice generation',
+        'Payment reminder automation',
+        'Late fee calculation & tracking'
+      ]
     },
     {
       icon: <BarChart3 className="h-8 w-8" />,
       title: 'Analytics & Reports',
       description: 'Get insights into your rental business performance',
-      color: 'from-orange-500 to-orange-600'
+      color: 'from-orange-500 to-orange-600',
+      details: [
+        'Real-time revenue analytics',
+        'Occupancy rate monitoring',
+        'Tenant behavior insights',
+        'Financial performance reports',
+        'Predictive vacancy analysis',
+        'Custom dashboard creation'
+      ]
     }
   ];
 
@@ -76,77 +109,69 @@ export const Index: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Hero Section with 3D Effects */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-green-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '4s' }}></div>
+      </div>
+
+      {/* Hero Section */}
+      <section className="relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
           <div className={`text-center transition-all duration-1000 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-            <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium mb-6">
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-sm border border-blue-500/30 text-blue-300 px-6 py-3 rounded-full text-sm font-medium mb-8 shadow-2xl">
               <Zap className="h-4 w-4" />
               Revolutionizing Rental Management
             </div>
             
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent mb-6">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent mb-6 drop-shadow-2xl">
               Welcome to RentFlow
             </h1>
             
-            <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
               The most powerful and intuitive property management software for PGs, hostels, and rental properties in India
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
               <Button 
                 size="lg" 
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg font-semibold shadow-2xl hover:shadow-purple-500/25 transform hover:scale-105 transition-all duration-300 border-0"
                 onClick={() => navigate('/auth')}
               >
-                Start Free Trial
+                Start Your Journey
                 <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                size="lg"
-                className="px-8 py-4 text-lg border-2 border-blue-600 text-blue-600 hover:bg-blue-50 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
-              >
-                <Play className="mr-2 h-5 w-5" />
-                Watch Demo
               </Button>
             </div>
 
             {/* Trust Indicators */}
-            <div className="flex flex-wrap justify-center items-center gap-8 text-gray-500 text-sm">
-              <div className="flex items-center gap-2">
+            <div className="flex flex-wrap justify-center items-center gap-8 text-gray-400 text-sm">
+              <div className="flex items-center gap-2 bg-white/5 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10">
                 <Shield className="h-4 w-4" />
                 <span>Bank-level Security</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 bg-white/5 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10">
                 <Clock className="h-4 w-4" />
                 <span>24/7 Support</span>
               </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4" />
+              <div className="flex items-center gap-2 bg-white/5 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10">
+                <Zap className="h-4 w-4" />
                 <span>No Setup Fee</span>
               </div>
             </div>
           </div>
         </div>
-
-        {/* Floating Elements Animation */}
-        <div className="absolute top-20 left-10 w-20 h-20 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full opacity-20 animate-bounce" style={{ animationDelay: '0s' }} />
-        <div className="absolute top-40 right-10 w-16 h-16 bg-gradient-to-r from-green-400 to-blue-400 rounded-full opacity-20 animate-bounce" style={{ animationDelay: '1s' }} />
-        <div className="absolute bottom-20 left-1/4 w-12 h-12 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full opacity-20 animate-bounce" style={{ animationDelay: '2s' }} />
       </section>
 
-      {/* Animated Features Section */}
-      <section className="py-20 relative">
+      {/* Features Section */}
+      <section className="py-20 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-5xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-4">
               Everything You Need to Manage Rentals
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
               Streamline your property management with our comprehensive suite of tools
             </p>
           </div>
@@ -156,17 +181,21 @@ export const Index: React.FC = () => {
               <Card 
                 key={index}
                 className={`
-                  group cursor-pointer transform transition-all duration-500 hover:scale-105 hover:shadow-2xl
-                  ${activeFeature === index ? 'ring-2 ring-blue-500 shadow-2xl scale-105' : 'hover:shadow-xl'}
+                  group cursor-pointer transform transition-all duration-500 hover:scale-105 bg-white/5 backdrop-blur-sm border-white/10 hover:border-white/20
+                  ${activeFeature === index ? 'ring-2 ring-blue-500/50 shadow-2xl shadow-blue-500/25 scale-105' : 'hover:shadow-xl'}
                 `}
                 onMouseEnter={() => setActiveFeature(index)}
+                onClick={() => setSelectedFeature(index)}
               >
                 <CardContent className="p-6 text-center">
-                  <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${feature.color} flex items-center justify-center text-white mx-auto mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                  <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${feature.color} flex items-center justify-center text-white mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
                     {feature.icon}
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{feature.title}</h3>
-                  <p className="text-gray-600">{feature.description}</p>
+                  <h3 className="text-xl font-semibold text-white mb-2">{feature.title}</h3>
+                  <p className="text-gray-300">{feature.description}</p>
+                  <Button variant="ghost" className="mt-4 text-blue-400 hover:text-blue-300 hover:bg-blue-500/10">
+                    Learn More →
+                  </Button>
                 </CardContent>
               </Card>
             ))}
@@ -174,30 +203,74 @@ export const Index: React.FC = () => {
         </div>
       </section>
 
+      {/* Feature Detail Modal */}
+      {selectedFeature !== null && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-8 max-w-2xl w-full border border-white/10 shadow-2xl">
+            <div className="flex justify-between items-center mb-6">
+              <div className="flex items-center gap-4">
+                <div className={`w-12 h-12 rounded-full bg-gradient-to-r ${features[selectedFeature].color} flex items-center justify-center text-white`}>
+                  {features[selectedFeature].icon}
+                </div>
+                <h3 className="text-2xl font-bold text-white">{features[selectedFeature].title}</h3>
+              </div>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => setSelectedFeature(null)}
+                className="text-gray-400 hover:text-white"
+              >
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
+            
+            <p className="text-gray-300 mb-6">{features[selectedFeature].description}</p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {features[selectedFeature].details.map((detail, idx) => (
+                <div key={idx} className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/10">
+                  <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full"></div>
+                  <span className="text-gray-300">{detail}</span>
+                </div>
+              ))}
+            </div>
+            
+            <Button 
+              className="w-full mt-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              onClick={() => navigate('/auth')}
+            >
+              Get Started with {features[selectedFeature].title}
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Benefits Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-50 to-purple-50">
+      <section className="py-20 bg-gradient-to-r from-blue-900/20 to-purple-900/20 backdrop-blur-sm relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+              <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-6">
                 Why Choose RentFlow?
               </h2>
-              <p className="text-lg text-gray-600 mb-8">
+              <p className="text-lg text-gray-300 mb-8">
                 Join thousands of property managers who have transformed their business with RentFlow
               </p>
               <div className="space-y-4">
                 {benefits.map((benefit, index) => (
-                  <div key={index} className="flex items-center gap-3">
-                    <CheckCircle className="h-6 w-6 text-green-500 flex-shrink-0" />
-                    <span className="text-gray-700">{benefit}</span>
+                  <div key={index} className="flex items-center gap-3 p-3 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10">
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-r from-green-400 to-blue-400 flex items-center justify-center flex-shrink-0">
+                      <Zap className="h-3 w-3 text-white" />
+                    </div>
+                    <span className="text-gray-300">{benefit}</span>
                   </div>
                 ))}
               </div>
             </div>
             
             <div className="relative">
-              {/* 3D Dashboard Preview */}
-              <div className="bg-white rounded-2xl shadow-2xl p-6 transform rotate-3 hover:rotate-0 transition-transform duration-300">
+              <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm rounded-2xl shadow-2xl p-6 transform rotate-3 hover:rotate-0 transition-transform duration-300 border border-white/10">
                 <div className="bg-gradient-to-r from-blue-500 to-purple-600 h-12 rounded-t-lg flex items-center px-4">
                   <div className="flex gap-2">
                     <div className="w-3 h-3 bg-white/30 rounded-full"></div>
@@ -206,13 +279,13 @@ export const Index: React.FC = () => {
                   </div>
                 </div>
                 <div className="p-4 space-y-3">
-                  <div className="h-8 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-8 bg-gradient-to-r from-blue-200/20 to-purple-200/20 rounded animate-pulse"></div>
                   <div className="grid grid-cols-3 gap-3">
-                    <div className="h-16 bg-blue-100 rounded"></div>
-                    <div className="h-16 bg-green-100 rounded"></div>
-                    <div className="h-16 bg-purple-100 rounded"></div>
+                    <div className="h-16 bg-blue-100/10 rounded"></div>
+                    <div className="h-16 bg-green-100/10 rounded"></div>
+                    <div className="h-16 bg-purple-100/10 rounded"></div>
                   </div>
-                  <div className="h-24 bg-gray-100 rounded"></div>
+                  <div className="h-24 bg-gray-100/10 rounded"></div>
                 </div>
               </div>
             </div>
@@ -221,30 +294,30 @@ export const Index: React.FC = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20">
+      <section className="py-20 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-4">
               Loved by Property Managers
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-xl text-gray-400">
               See what our customers have to say about RentFlow
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
-              <Card key={index} className="transform hover:scale-105 transition-all duration-300 hover:shadow-xl">
+              <Card key={index} className="transform hover:scale-105 transition-all duration-300 bg-white/5 backdrop-blur-sm border-white/10 hover:border-white/20 hover:shadow-2xl">
                 <CardContent className="p-6">
                   <div className="flex mb-4">
                     {[...Array(testimonial.rating)].map((_, i) => (
                       <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
                     ))}
                   </div>
-                  <p className="text-gray-600 mb-4 italic">"{testimonial.content}"</p>
+                  <p className="text-gray-300 mb-4 italic">"{testimonial.content}"</p>
                   <div>
-                    <p className="font-semibold text-gray-900">{testimonial.name}</p>
-                    <p className="text-sm text-gray-500">{testimonial.role}</p>
+                    <p className="font-semibold text-white">{testimonial.name}</p>
+                    <p className="text-sm text-gray-400">{testimonial.role}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -254,7 +327,7 @@ export const Index: React.FC = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+      <section className="py-20 bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-sm text-white relative z-10">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-5xl font-bold mb-6">
             Ready to Transform Your Rental Business?
@@ -265,18 +338,11 @@ export const Index: React.FC = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
               size="lg" 
-              className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+              className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold shadow-2xl hover:shadow-white/25 transform hover:scale-105 transition-all duration-300"
               onClick={() => navigate('/auth')}
             >
               Start Your Free Trial
               <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button 
-              variant="outline" 
-              size="lg"
-              className="border-2 border-white text-white hover:bg-white/10 px-8 py-4 text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
-            >
-              Schedule Demo
             </Button>
           </div>
           <p className="text-sm mt-6 opacity-75">
