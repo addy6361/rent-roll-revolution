@@ -20,7 +20,7 @@ export const Auth: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/20 via-background to-secondary/20">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
@@ -89,48 +89,52 @@ export const Auth: React.FC = () => {
 
   const features = [
     {
-      icon: <Building2 className="h-6 w-6" />,
+      icon: <Building2 className="h-8 w-8" />,
       title: "Multi-Property Management",
-      description: "Manage unlimited properties from one dashboard"
+      description: "Manage unlimited properties from one centralized dashboard with advanced filtering and search capabilities"
     },
     {
-      icon: <Users className="h-6 w-6" />,
+      icon: <Users className="h-8 w-8" />,
       title: "Smart Tenant Tracking",
-      description: "Complete tenant lifecycle management"
+      description: "Complete tenant lifecycle management with automated lease tracking, renewal reminders, and communication tools"
     },
     {
-      icon: <Zap className="h-6 w-6" />,
+      icon: <Zap className="h-8 w-8" />,
       title: "Automated Payments",
-      description: "Streamline rent collection with automation"
+      description: "Streamline rent collection with automated payment processing, late fee management, and financial reporting"
     },
     {
-      icon: <BarChart3 className="h-6 w-6" />,
+      icon: <BarChart3 className="h-8 w-8" />,
       title: "Advanced Analytics",
-      description: "Real-time insights and performance metrics"
+      description: "Real-time insights and performance metrics with customizable reports and revenue forecasting"
     }
   ];
 
   const benefits = [
     "Free 30-day trial with full access",
-    "No setup fees or hidden charges",
+    "No setup fees or hidden charges", 
     "24/7 customer support",
     "Bank-level security & encryption"
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-secondary/10">
       {/* Header */}
-      <div className="border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div className="border-b border-border/50 bg-background/80 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Building2 className="h-8 w-8 text-primary" />
-              <span className="text-2xl font-bold text-foreground">RentFlow</span>
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-primary to-secondary rounded-xl flex items-center justify-center shadow-lg">
+                <Building2 className="h-6 w-6 text-primary-foreground" />
+              </div>
+              <span className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                RentFlow
+              </span>
             </div>
             <Button 
-              variant="ghost" 
+              variant="outline" 
               onClick={() => navigate('/')}
-              className="text-muted-foreground hover:text-foreground"
+              className="border-border/50 hover:bg-accent/50 backdrop-blur-sm"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Home
@@ -140,100 +144,119 @@ export const Auth: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex">
+      <div className="flex-1 flex min-h-[calc(100vh-100px)]">
         {/* Left Side - Features */}
-        <div className="hidden lg:flex lg:w-1/2 bg-muted/30 p-12 flex-col justify-center">
-          <div className="max-w-lg">
-            <h2 className="text-4xl font-bold text-foreground mb-6">
-              Transform Your Property Management Today
+        <div className="hidden lg:flex lg:w-1/2 p-12 flex-col justify-center relative overflow-hidden">
+          {/* Background Elements */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5"></div>
+          <div className="absolute top-20 left-20 w-72 h-72 bg-primary/10 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 right-20 w-72 h-72 bg-secondary/10 rounded-full blur-3xl"></div>
+          
+          <div className="relative z-10 max-w-lg">
+            <h2 className="text-5xl font-bold text-foreground mb-6 leading-tight">
+              Transform Your 
+              <span className="block bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                Property Management
+              </span>
             </h2>
-            <p className="text-xl text-muted-foreground mb-8">
-              Join thousands of property managers who trust RentFlow to streamline their operations
+            <p className="text-xl text-muted-foreground mb-12 leading-relaxed">
+              Join thousands of property managers who trust RentFlow to streamline their operations and maximize their revenue
             </p>
 
-            <div className="space-y-6 mb-12">
+            <div className="space-y-8 mb-12">
               {features.map((feature, index) => (
-                <div key={index} className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <div key={index} className="flex items-start gap-6 group">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-r from-primary/20 to-secondary/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-lg">
                     <div className="text-primary">
                       {feature.icon}
                     </div>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-foreground mb-1">{feature.title}</h3>
-                    <p className="text-muted-foreground text-sm">{feature.desc}</p>
+                    <h3 className="font-semibold text-foreground mb-2 text-lg">{feature.title}</h3>
+                    <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
                   </div>
                 </div>
               ))}
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-4 mb-12">
               {benefits.map((benefit, index) => (
-                <div key={index} className="flex items-center gap-3">
-                  <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />
-                  <span className="text-foreground">{benefit}</span>
+                <div key={index} className="flex items-center gap-4">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center flex-shrink-0">
+                    <CheckCircle className="h-4 w-4 text-white" />
+                  </div>
+                  <span className="text-foreground font-medium">{benefit}</span>
                 </div>
               ))}
             </div>
 
-            <div className="mt-12 p-6 bg-primary/5 rounded-xl border border-primary/20">
-              <div className="flex items-center gap-3 mb-4">
-                <Shield className="h-6 w-6 text-primary" />
-                <span className="font-semibold text-foreground">Enterprise Security</span>
+            <div className="p-8 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-3xl border border-primary/20 backdrop-blur-sm shadow-xl">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
+                  <Shield className="h-6 w-6 text-primary-foreground" />
+                </div>
+                <span className="font-bold text-foreground text-xl">Enterprise Security</span>
               </div>
-              <p className="text-muted-foreground text-sm">
-                Your data is protected with bank-level encryption and security protocols trusted by leading financial institutions.
+              <p className="text-muted-foreground leading-relaxed">
+                Your data is protected with bank-level encryption and security protocols trusted by leading financial institutions worldwide.
               </p>
             </div>
           </div>
         </div>
 
         {/* Right Side - Auth Form */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
-          <div className="w-full max-w-md">
-            <Card className="border-border shadow-lg">
-              <CardHeader className="space-y-2 text-center pb-6">
-                <CardTitle className="text-2xl font-bold text-foreground">
+        <div className="w-full lg:w-1/2 flex items-center justify-center p-8 relative">
+          {/* Background Elements */}
+          <div className="absolute inset-0 bg-gradient-to-tl from-primary/5 to-secondary/5"></div>
+          <div className="absolute top-32 right-32 w-64 h-64 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full blur-3xl"></div>
+          
+          <div className="w-full max-w-md relative z-10">
+            <Card className="border-border/50 shadow-2xl bg-background/80 backdrop-blur-md">
+              <CardHeader className="space-y-4 text-center pb-8">
+                <div className="w-16 h-16 bg-gradient-to-r from-primary to-secondary rounded-2xl flex items-center justify-center mx-auto shadow-lg">
+                  <Building2 className="h-8 w-8 text-primary-foreground" />
+                </div>
+                <CardTitle className="text-3xl font-bold text-foreground">
                   Welcome to RentFlow
                 </CardTitle>
-                <CardDescription className="text-muted-foreground">
+                <CardDescription className="text-muted-foreground text-lg">
                   Sign in to your account or create a new one to get started
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                  <TabsList className="grid w-full grid-cols-3 mb-6 bg-muted">
+                  <TabsList className="grid w-full grid-cols-3 mb-8 bg-muted/50 backdrop-blur-sm h-12">
                     <TabsTrigger 
                       value="signin" 
-                      className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                      className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-medium"
                     >
                       Sign In
                     </TabsTrigger>
                     <TabsTrigger 
                       value="signup"
-                      className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                      className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-medium"
                     >
                       Sign Up
                     </TabsTrigger>
                     <TabsTrigger 
                       value="reset"
-                      className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                      className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-medium"
                     >
                       Reset
                     </TabsTrigger>
                   </TabsList>
 
                   {error && (
-                    <Alert className="mb-4 border-destructive/50 bg-destructive/10">
-                      <AlertDescription className="text-destructive">
+                    <Alert className="mb-6 border-destructive/50 bg-destructive/10 backdrop-blur-sm">
+                      <AlertDescription className="text-destructive font-medium">
                         {error}
                       </AlertDescription>
                     </Alert>
                   )}
 
                   {success && (
-                    <Alert className="mb-4 border-green-500/50 bg-green-500/10">
-                      <AlertDescription className="text-green-700">
+                    <Alert className="mb-6 border-green-500/50 bg-green-500/10 backdrop-blur-sm">
+                      <AlertDescription className="text-green-700 font-medium">
                         {success}
                       </AlertDescription>
                     </Alert>
@@ -348,26 +371,26 @@ export const Auth: React.FC = () => {
             </Card>
 
             {/* Trust Indicators */}
-            <div className="mt-6 text-center space-y-4">
-              <div className="flex justify-center items-center gap-4 text-muted-foreground text-sm">
-                <div className="flex items-center gap-2">
-                  <Shield className="h-4 w-4" />
-                  <span>Secure</span>
+            <div className="mt-8 text-center space-y-6">
+              <div className="flex justify-center items-center gap-6 text-muted-foreground">
+                <div className="flex items-center gap-2 bg-background/50 backdrop-blur-sm px-4 py-2 rounded-full border border-border/50">
+                  <Shield className="h-5 w-5 text-primary" />
+                  <span className="font-medium">Secure</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4" />
-                  <span>24/7 Support</span>
+                <div className="flex items-center gap-2 bg-background/50 backdrop-blur-sm px-4 py-2 rounded-full border border-border/50">
+                  <Clock className="h-5 w-5 text-primary" />
+                  <span className="font-medium">24/7 Support</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Star className="h-4 w-4" />
-                  <span>5-Star Rated</span>
+                <div className="flex items-center gap-2 bg-background/50 backdrop-blur-sm px-4 py-2 rounded-full border border-border/50">
+                  <Star className="h-5 w-5 text-primary" />
+                  <span className="font-medium">5-Star Rated</span>
                 </div>
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 By signing up, you agree to our{' '}
-                <a href="#" className="text-primary hover:underline">Terms of Service</a>
+                <a href="#" className="text-primary hover:underline font-medium">Terms of Service</a>
                 {' '}and{' '}
-                <a href="#" className="text-primary hover:underline">Privacy Policy</a>
+                <a href="#" className="text-primary hover:underline font-medium">Privacy Policy</a>
               </p>
             </div>
           </div>
